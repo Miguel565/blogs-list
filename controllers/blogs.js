@@ -7,7 +7,7 @@ blogsRouter.get('/', (req, res) => {
     })
 })
 
-blogdRouter.get('/:id', (req, res, next) => {
+blogsRouter.get('/:id', (req, res, next) => {
     Blog.findById(req.params.id)
         .then(blog => {
             if(blog) {
@@ -46,6 +46,13 @@ blogsRouter.put('/:id', (req, res, next) => {
     Blog.findByIdAndUpdate(req.params.id, blog, { new: true})
         .then(updatedBlog => {
             res.json(updatedBlog)
+        }).catch(error => next(error))
+})
+
+blogsRouter.delete('/:id', (req, res, next) => {
+    Blog.findByIdAndDelete(req.params.id)
+        .then(result => {
+            res.status(204).end()
         }).catch(error => next(error))
 })
 
