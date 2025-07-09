@@ -8,4 +8,16 @@ const totalLikes = (blogs) => {
 	return sum
 }
 
-module.exports = { dummy, totalLikes }
+const favoriteBlog = (blogs) => {
+	const likes = blogs.map(blog => blog.likes)
+	const maxLike = likes.indexOf(Math.max(...likes))
+	const favorite = {
+    	title: blogs[maxLike].title,
+        author: blogs[maxLike].author,
+        likes: blogs[maxLike].likes
+    }
+
+	return favorite
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog }
