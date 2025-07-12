@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
-    "test": "node --test"
+    "test": "cross-env NODE_ENV=test node --test"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
   "homepage": "https://github.com/Miguel565/blogs-list#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^17.0.1",
     "express": "^5.1.0",
     "lodash": "^4.17.21",
@@ -30,8 +31,10 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "@stylistic/eslint-plugin-js": "^4.4.1",
     "eslint": "^9.30.1",
     "globals": "^16.3.0",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.3"
   }
 }
