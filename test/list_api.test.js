@@ -1,4 +1,4 @@
-const { test, describe, afte, beforeEach } = require('node:test')
+const { test, describe, after, beforeEach } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -13,16 +13,16 @@ beforeEach(async () => {
 	await Blog.insertMany(helper.initialBlogs)
 })
 
-test.only('Blogs are returned as json', async () => {
-		await api.get('/api/blogs')
-			.expect(200)
-			.expect('Content-Type', /application\/json/)
+test('Blogs are returned as json', async () => {
+	await api.get('/api/blogs')
+		.expect(200)
+		.expect('Content-Type', /application\/json/)
 })
 
 describe('Blogs length', () => {
-	test('There are 3 blogs in the list', async () => {
-		const response = await api.get('/api/blogs')
-		assert.estrictEquals(response.body.length, list_blogs.length)
+	test.only('There are 3 blogs in the list', async () => {
+		const response = await helper.blogInDb()
+		assert.strictEqual(response.length, helper.initialBlogs.length, `Expected ${helper.initialBlogs.length} blogs, but got ${response.length}`)
 	})
 })
 
