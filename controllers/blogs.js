@@ -15,19 +15,16 @@ blogsRouter.get('/:id', async (req, res) => {
     }
 })
 
-blogsRouter.post('/', (req, res, next) => {
-    const body = req.body
-
+blogsRouter.post('/', async (req, res) => {
     const blog = new Blog({
-        title: body.title,
-        author: body.author,
-        url: body.url,
-        likes: body.likes
+        title: req.body.title,
+        author: req.body.author,
+        url: req.body.url,
+        likes: req.body.likes
     })
 
-    blog.save().then(blogSaved => {
-        res.json(blogSaved)
-    }).catch(error => next(error))
+    const savedBlog = await blog.save()
+    res.status(201).json(savedBlog)
 })
 
 blogsRouter.put('/:id', (req, res, next) => {
