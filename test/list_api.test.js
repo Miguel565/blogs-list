@@ -20,9 +20,20 @@ test('Blogs are returned as json', async () => {
 })
 
 describe('Blogs length', () => {
-	test.only('There are 3 blogs in the list', async () => {
+	test('There are 3 blogs in the list', async () => {
 		const response = await helper.blogInDb()
 		assert.strictEqual(response.length, helper.initialBlogs.length, `Expected ${helper.initialBlogs.length} blogs, but got ${response.length}`)
+	})
+})
+
+describe('Blog id', () => {
+	test.only('Viewing a specific blog', async () => {
+		const blogsAtStart = await helper.blogInDb()
+		const blogToView = blogsAtStart[0]
+		const response = await api.get(`/api/blogs/${blogToView.id}`)
+			.expect(200)
+			.expect('Content-Type', /application\/json/)
+		assert.strictEqual(response.body.title, blogToView.title, `Expected title to be ${blogToView.title}, but got ${response.body.title}`)
 	})
 })
 

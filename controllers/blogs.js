@@ -6,16 +6,13 @@ blogsRouter.get('/', async (req, res) => {
     res.json(blogs)
 })
 
-blogsRouter.get('/:id', (req, res, next) => {
-    Blog.findById(req.params.id)
-        .then(blog => {
-            if(blog) {
-                res.json(blog)
-            } else {
-                res.status(404).end()
-            }
-        })
-        .catch(error => next(error))
+blogsRouter.get('/:id', async (req, res) => {
+    const blog = await Blog.findById(req.params.id)
+    if (blog) {
+        res.json(blog)
+    } else {
+        res.status(404).end()
+    }
 })
 
 blogsRouter.post('/', (req, res, next) => {
