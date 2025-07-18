@@ -55,6 +55,22 @@ describe('Add blog', () => {
 	})
 })
 
+describe('Default likes property', () => {
+  test('If likes is missing from the request, it will default to 0', async () => {
+    const newBlog = {
+      title: 'Blog sin likes',
+      author: 'Autor test',
+      url: 'http://www.testurl.com',
+      // likes no está definido
+    }
+    const response = await api.post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+    assert.strictEqual(response.body.likes, 0, `Expected likes to be 0, but got ${response.body.likes}`)
+  })
+})
+
 after(async () => {
 	await mongoose.connection.close()
 })
