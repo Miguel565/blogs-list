@@ -71,6 +71,21 @@ describe('Default likes property', () => {
   })
 })
 
+describe('Missing title or url', () => {
+	test('Adding a blog without title or url returns 400', async () => {
+		const newBlog = {
+			author: 'Author test',
+			likes: 0
+		}
+		await api.post('/api/blogs')
+			.send(newBlog)
+			.expect(400)
+			.expect('Content-Type', /application\/json/)
+		const blogsAtEnd = await helper.blogInDb()
+		assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length, `Expected ${helper.initialBlogs.length} blogs, but got ${blogsAtEnd.length}`)
+	})
+})
+
 after(async () => {
 	await mongoose.connection.close()
 })

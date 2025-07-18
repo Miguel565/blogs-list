@@ -16,6 +16,10 @@ blogsRouter.get('/:id', async (req, res) => {
 })
 
 blogsRouter.post('/', async (req, res) => {
+    if (!req.body.title || !req.body.url) {
+        return res.status(400).json({ error: 'Title and URL are required' })
+    }
+
     const blog = new Blog({
         title: req.body.title,
         author: req.body.author,
