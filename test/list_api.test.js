@@ -23,13 +23,26 @@ describe('When there are blogs saved', () => {
 		const response = await api.get('/api/blogs')
 		assert.strictEqual(response.body.length, helper.initialBlogs.length, `Expected ${helper.initialBlogs.length} blogs, but got ${response.body.length}`)
 	})
-	test('Viewing a specific blog', async () => {
+})
+
+describe('Viewing a especific blog', () => {
+	test('Succeeds with a valid id', async () => {
 		const blogsAtStart = await helper.blogsInDb()
 		const blogToView = blogsAtStart[0]
 		const response = await api.get(`/api/blogs/${blogToView.id}`)
 			.expect(200)
 			.expect('Content-Type', /application\/json/)
 		assert.strictEqual(response.body.title, blogToView.title, `Expected title to be ${blogToView.title}, but got ${response.body.title}`)
+	})
+	test('Fails with statuscode 404, if blog does not exist', async () => {
+		const invalidId = await helper.nonExistingId()
+
+		await api.get(`/api/blogs/${invalidId}`).expect(404)
+	})
+	test('Fails with statuscode 400, if id is invalid', async () => {
+		const fakeID = '34343f56d700458832a3a'
+
+		await api.get(`/api/blogs/${fakeID}`).expect(400)
 	})
 })
 
@@ -87,6 +100,38 @@ describe('Deletion of a blog', () => {
 		const titles = blogsAtEnd.map((b) => b.title)
 		assert(!titles.includes(blogToDelete.title), `Expected blog with title ${blogToDelete.title} to be deleted, but it was found in the database`)
 		assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1, `Expected ${blogsAtStart.length - 1} blogs, but got ${blogsAtEnd.length}`)
+	})
+	test('Fails with statuscode 204 if blog does not exist', async () => {
+		const invalidId = await helper.nonExistingId()
+		await api.delete(`/api/blogs/${invalidId}`).expect(204)
+	})
+})
+
+describe('Updating a blog', () => {
+	test('Succeeds with status code 200 if id is valid', async () => {
+		const blogsAtStart = await helper.blogsInDb()
+		const blogToUpdate = blogsAtStart[0]
+		const updatedBlog = {
+			likes: blogToUpdate.likes + 1,
+		}
+		const response = await api.put(`/api/blogs/${blogToUpdate.id}`)
+			.send(updatedBlog)
+			.expect(200)
+			.expect('Content-Type', /application\/json/)
+		const blogsAtEnd = await helper.blogsInDb()
+		const updatedBlogInDb = blogsAtEnd.find(b => b.id === blogToUpdate.id)
+		assert.strictEqual(response.body.likes, blogToUpdate.likes + 1, `Expected likes to be ${blogToUpdate.likes + 1}, but got ${response.body.likes}`)
+		assert(updatedBlogInDb, `Expected blog with id ${blogToUpdate.id} to be found in the database after update`)
+	})
+	test('Fails with statuscode 400, if id is invalid', async () => {
+		const fakeID = '34343f56d700458832a3a'
+		const updatedBlog = {
+			likes: 2,
+		}
+		await api.put(`/api/blogs/${fakeID}`)
+			.send(updatedBlog)
+			.expect(400)
+			.expect('Content-Type', /application\/json/)
 	})
 })
 

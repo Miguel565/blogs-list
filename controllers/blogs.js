@@ -31,18 +31,15 @@ blogsRouter.post('/', async (req, res) => {
     res.status(201).json(savedBlog)
 })
 
-blogsRouter.put('/:id', (req, res, next) => {
-    const body = req.body
+blogsRouter.put('/:id', async (req, res) => {
     const blog = {
-        title: body.title,
-        author: body.author,
-        url: body.url,
-        likes: body.likes
+        title: req.body.title,
+        author: req.body.author,
+        url: req.body.url,
+        likes: req.body.likes
     }
-    Blog.findByIdAndUpdate(req.params.id, blog, { new: true })
-        .then(updatedBlog => {
-            res.json(updatedBlog)
-        }).catch(error => next(error))
+    const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, blog, { new: true })
+    res.status(200).json(updatedBlog)
 })
 
 blogsRouter.delete('/:id', async (req, res) => {
