@@ -28,9 +28,9 @@
     "dotenv": "^17.0.1",
     "express": "^4.21.2",
     "express-async-errors": "^3.1.1",
+    "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
-    "mongoose": "^8.16.1",
-    "morgan": "^1.10.0"
+    "mongoose": "^8.16.1"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin-js": "^4.4.1",

@@ -2,18 +2,20 @@ const { test, describe, after, beforeEach } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+//const bcrypt = require('bcrypt')
+
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const app = require('../app')
 
 const api = supertest(app)
 
-beforeEach(async () => {
-	await Blog.deleteMany({})
-	await Blog.insertMany(helper.initialBlogs)
-})
-
 describe('When there are blogs saved', () => {
+	beforeEach(async () => {
+		await Blog.deleteMany({})
+		await Blog.insertMany(helper.initialBlogs)
+	})
 	test('Blogs are returned as json', async () => {
 		await api.get('/api/blogs')
 			.expect(200)
@@ -132,6 +134,44 @@ describe('Updating a blog', () => {
 			.send(updatedBlog)
 			.expect(400)
 			.expect('Content-Type', /application\/json/)
+	})
+})
+
+describe('When there is initially one user at db', () => {
+	beforeEach(async () => {
+		await User.deleteMany({})
+		await User.insertMany(helper.initialUser)
+	})
+	test('Creation secceeds with a fresh username', async () => {
+		const userAtStart = await helper.userInDb()
+		const newUser = {
+			username: 'mluukkai',
+			name: 'Trafalgar Law',
+			password: 'corazon'
+		}
+		await api.post('/pai/users')
+			.send(newUser)
+			.expect(201)
+			.expect('Content-Type', /application\/json/)
+		const userAtEnd = await helper.userInDb()
+		const usernames = userAtEnd.map(u => u.username)
+		assert.strictEqual(userAtEnd.length, userAtStart.length + 1, `Expected ${userAtStart.length + 1} users, but got ${userAtEnd.length}`)
+		assert(usernames.includes(newUser.username), `Expected username ${newUser.username} to be in the database, but it was not found`)
+	})
+	test('Creation fails with proper statuscode, if username already taken', async () => {
+		const userAtStart = await helper.userInDb()
+		const newUser = {
+			username: 'root',
+			name: 'Superuser',
+			password: 'passTest'
+		}
+		const result = await api.post('/api/users')
+			.send(newUser)
+			.expect(400)
+			.expect('Content-Type', /application\/json/)
+		const userAtEnd = await helper.userInDb()
+		assert(result.body.error.includes('Expected `username` to be unique'), `Expected error message to include 'username' uniqueness constraint, but got ${result.body.error}`)
+		assert.strictEqual(userAtEnd.length, userAtStart.length, `Expected ${userAtStart.length} users, but got ${userAtEnd.length}`)
 	})
 })
 
