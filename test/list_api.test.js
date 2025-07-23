@@ -139,7 +139,10 @@ describe('Updating a blog', () => {
 
 describe('When there is initially one user at db', () => {
 	beforeEach(async () => {
-		await User.deleteMany({})
+		const userTest = await User.find({})
+		if (userTest.length > 1) {
+			await User.deleteMany({})
+		}
 		await User.insertMany(helper.initialUser)
 	})
 	test('Creation secceeds with a fresh username', async () => {
