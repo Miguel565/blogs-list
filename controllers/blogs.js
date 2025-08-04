@@ -1,7 +1,7 @@
 const blogsRouter = require('express').Router()
-//const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const middleware = require('./utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({})
@@ -18,7 +18,7 @@ blogsRouter.get('/:id', async (request, response) => {
     }
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     if (!request.body.title || !request.body.url) {
         return response.status(400).json({ error: 'Title and URL are requestuired' })
     }
