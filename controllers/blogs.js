@@ -49,12 +49,8 @@ blogsRouter.put('/:id', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-    const blog = await Blog.findById(request.params.id)
-    const userId = request.user
-    if(blog.user.toString() === userId.toString()) {
-        await Blog.findByIdAndDelete(request.params.id)
-        response.status(204).end()
-    }
+    await Blog.findByIdAndDelete(request.params.id)
+    response.status(204).end()
 })
 
 module.exports = blogsRouter

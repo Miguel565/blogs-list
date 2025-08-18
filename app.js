@@ -12,10 +12,10 @@ const mongoose = require('mongoose')
 
 mongoose.set('strictQuery', false)
 
-logger.info('Connecting to MongoDB')
+logger.info('Connecting to MongoDB...')
 mongoose.connect(MONGODB_URI)
   .then(() => {
-    logger.info('Connected to MongoDB')
+    logger.info('Connected to MongoDB!')
   })
   .catch((error) => {
     logger.error('Error connecting to MongoDB:', error.message)
@@ -30,6 +30,11 @@ app.use(middleware.tokenExtractor)
 app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
+
+if (process.env.NODE_ENV === 'test') {
+  const testingRouter = require('./controllers/testing')
+  app.use('/api/testing', testingRouter)
+}
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
