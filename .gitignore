@@ -28,6 +28,7 @@ yarn-debug.log*
 
 #Dependency directories
 node_modules/
+dist/
 jspm_packages/
 #Cache folder
 .alcache/
